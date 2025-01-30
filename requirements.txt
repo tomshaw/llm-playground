@@ -8,4 +8,6 @@ langchain-openai
 firecrawl-py
 beautifulsoup4
 tavily-python
+pandas
+pypdf
 git+https://github.com/sendinblue/APIv3-python-library.git
