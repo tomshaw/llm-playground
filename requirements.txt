@@ -1,0 +1,10 @@
+langgraph
+langchain
+openai
+ollama
+langchain-community
+langchain-core
+langchain-openai
+firecrawl-py
+beautifulsoup4
+git+https://github.com/sendinblue/APIv3-python-library.git
