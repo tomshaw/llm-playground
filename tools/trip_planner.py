@@ -49,7 +49,7 @@ def get_latest_news(city: str) -> str:
     response = tavily_client.search(f"latest news in {city}")
     if "results" not in response:
         return "Failed to fetch news."
-    return "\n".join([f"{item['title']}: {item['url']}" for item in response["results"]])
+    return "\n".join([f"{item['title']}: {item['url']} - {item['content']}" for item in response["results"]])
 
 @tool
 def translate_common_phrases(language: str) -> str:
@@ -89,7 +89,7 @@ prompt = ChatPromptTemplate.from_messages([
      - Retrieve the current exchange rate from **USD to the local currency**.  
 
      #### **4. Latest News:**  
-     - Summarize the **most recent and relevant news articles** related to **{city}**.  
+     - Provice a detailed summarization of the **most recent and relevant news articles** related to **{city}**.  
 
      #### **5. Common Phrase Translations:**  
      - Provide **translations of essential travel phrases** into the **local language** of **{city}**.  
