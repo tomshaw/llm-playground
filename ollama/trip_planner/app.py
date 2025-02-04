@@ -166,7 +166,8 @@ Use the following tools to gather accurate and up-to-date information:
 #### **Output Formatting:**  
 - Present the information in a well-structured travel report.  
 - Ensure the weather section includes **daily summaries** for quick reference.  
-- Make the report **engaging, concise, and informative**.  
+- Make the report **engaging, concise, and informative**.
+- Do not mention the tools used in the final report.  
 """
 
 # Ollama query
