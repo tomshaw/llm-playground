@@ -16,38 +16,42 @@ OPENWEATHERMAP_API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
 
 # Common phrases to translate
 COMMON_PHRASES = ["Hello", "Thank you", "Where is the restroom?", "How much does this cost?", "Goodbye"]
-
+    
 # Function to get 5-day weather forecast
-def get_weather_forecast(city: str, days_ahead: int = 0) -> str:
+def get_weather_forecast(city: str, number_days: int = 0) -> str:
     """
-    This function uses the OpenWeatherMap API to get the current weather for a given location.
+    This function uses the OpenWeatherMap API to get the 5-day weather forecast for a given location.
     """ 
 
     api_key = os.environ.get("OPENWEATHERMAP_API_KEY")
     if not api_key:
         raise Exception("OPENWEATHERMAP_API_KEY environment variable not set.")
 
-    if days_ahead > 0:
-        target_date = (datetime.now() + timedelta(days=days_ahead)).strftime('%Y-%m-%d')
-    else:
-        target_date = None
-
-    base_url = "http://api.openweathermap.org/data/2.5/weather" 
+    base_url = "http://api.openweathermap.org/data/2.5/forecast"
 
     params = {
         "q": city,
         "appid": api_key,
-        "units": "metric"
+        "units": "metric",
+        "cnt": number_days
     }
 
     response = requests.get(base_url, params=params)
 
     if response.status_code == 200:
         data = response.json()
-        if target_date:
-            return f"The weather in {data['name']}, {data['sys']['country']} on {target_date} is currently {data['weather'][0]['description']} with a temperature of {data['main']['temp']}°C. The humidity is {data['main']['humidity']}% and the wind speed is {data['wind']['speed']} m/s."
-        else:
-            return f"The weather in {data['name']}, {data['sys']['country']} is currently {data['weather'][0]['description']} with a temperature of {data['main']['temp']}°C. The humidity is {data['main']['humidity']}% and the wind speed is {data['wind']['speed']} m/s."
+        forecast_list = data['list']
+        forecast_summary = []
+
+        for forecast in forecast_list:
+            date = forecast['dt_txt']
+            description = forecast['weather'][0]['description']
+            temp = forecast['main']['temp']
+            humidity = forecast['main']['humidity']
+            wind_speed = forecast['wind']['speed']
+            forecast_summary.append(f"Date: {date}, Weather: {description}, Temp: {temp}°C, Humidity: {humidity}%, Wind Speed: {wind_speed} m/s")
+
+        return "\n".join(forecast_summary)
     else:
         raise Exception(f"Error fetching weather data: {response.status_code}")
 
@@ -133,20 +137,37 @@ city = input("Where are you planning to take a trip to? ")
 
 # Detailed prompt for Ollama query
 prompt = f"""
-I am traveling to {city}. Please provide a detailed travel report including the following information:
-1. The local currency and official language of {city}.
-2. A 5-day weather forecast for {city}.
-3. The exchange rate from USD to the local currency.
-4. The latest news articles related to {city}.
-5. Translations of common phrases into the local language.
+### **Travel Planner:**  
+I am traveling to **{city}** and need a comprehensive travel report. Please gather and summarize the following details:  
 
-Use the following tools to gather the information:
-- get_weather_forecast: Fetch the current weather for a given location.
-- get_exchange_rate: Retrieve the exchange rate from USD to the given currency.
-- get_latest_news: Fetch the latest news articles for a given location.
-- translate_common_phrases: Translate common phrases into the local language.
+#### **1. Local Information:**  
+- What is the official language spoken in **{city}**?  
+- What is the local currency used in **{city}**?  
 
-After gathering the information, format the output as a detailed travel report.
+#### **2. 5-Day Weather Forecast:**  
+- Provide a **detailed 5-day forecast** for **{city}**, including **temperature, precipitation, humidity, and general weather conditions**.  
+- Summarize the expected weather trends for each day (e.g., "Expect a warm and sunny day with mild breezes").  
+
+#### **3. Exchange Rate:**  
+- Retrieve the current exchange rate from **USD to the local currency**.  
+
+#### **4. Latest News:**  
+- Summarize the **most recent and relevant news articles** related to **{city}**.  
+
+#### **5. Common Phrase Translations:**  
+- Provide **translations of essential travel phrases** into the **local language** of **{city}**.  
+
+#### **Tools for Data Retrieval:**  
+Use the following tools to gather accurate and up-to-date information:  
+- **get_weather_forecast** – Fetch the 5-day weather forecast for **{city}**.  
+- **get_exchange_rate** – Retrieve the exchange rate from **USD to the local currency**.  
+- **get_latest_news** – Fetch and summarize the latest news articles about **{city}**.  
+- **translate_common_phrases** – Translate common travel phrases into the **local language**.  
+
+#### **Output Formatting:**  
+- Present the information in a well-structured travel report.  
+- Ensure the weather section includes **daily summaries** for quick reference.  
+- Make the report **engaging, concise, and informative**.  
 """
 
 # Ollama query
