@@ -1,5 +1,4 @@
 import os
-from datetime import datetime, timedelta
 
 import requests
 from dotenv import load_dotenv
@@ -159,10 +158,10 @@ I am traveling to **{city}** and need a comprehensive travel report. Please gath
 
 #### **Tools for Data Retrieval:**  
 Use the following tools to gather accurate and up-to-date information:  
-- **get_weather_forecast** – Fetch the 5-day weather forecast for **{city}**.  
-- **get_exchange_rate** – Retrieve the exchange rate from **USD to the local currency**.  
-- **get_latest_news** – Fetch and summarize the latest news articles about **{city}**.  
-- **translate_common_phrases** – Translate common travel phrases into the **local language**.  
+- **get_weather_forecast** - Fetch the 5-day weather forecast for **{city}**.  
+- **get_exchange_rate** - Retrieve the exchange rate from **USD to the local currency**.  
+- **get_latest_news** - Fetch and summarize the latest news articles about **{city}**.  
+- **translate_common_phrases** - Translate common travel phrases into the **local language**.  
 
 #### **Output Formatting:**  
 - Present the information in a well-structured travel report.  
