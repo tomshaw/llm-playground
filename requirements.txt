@@ -5,6 +5,7 @@ ollama
 langchain-community
 langchain-core
 langchain-openai
+langchain-ollama
 firecrawl-py
 beautifulsoup4
 tavily-python
