@@ -1,6 +1,7 @@
 from typing import TypedDict, Annotated, Any
 
 import yfinance as yf
+from langchain_community.retrievers import WikipediaRetriever
 from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_openai import ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
@@ -18,10 +19,27 @@ class QueryState(TypedDict):
 class IntelligentAgent:
     def __init__(self):
         """Initializes the agent with tools and workflow setup."""
-        self.tools = [DuckDuckGoSearchRun(), self.get_stock_price]
+        self.wikipedia_retriever = WikipediaRetriever(load_all_available_meta=False, top_k_results=1)
+        self.tools = [
+            DuckDuckGoSearchRun(),
+            self.wikipedia_search,
+            self.get_stock_price
+        ]
         self.llm = ChatOpenAI(model="gpt-4o-mini")
         self.llm_with_tools = self.llm.bind_tools(self.tools)
         self.workflow = self.build_workflow()
+        
+    def wikipedia_search(self, query: str) -> Any:
+        """
+        Perform a search using WikipediaRetriever.
+
+        Args:
+            query (str): The search query.
+
+        Returns:
+            Any: The search results.
+        """
+        return self.wikipedia_retriever.invoke(query)
         
     def get_stock_price(self, ticker: str) -> float:
         """
@@ -55,8 +73,13 @@ class IntelligentAgent:
         
         system_message = SystemMessage(
             content=(
-                "You are an intelligent assistant capable of performing web searches and retrieving stock market data. "
-                "Please provide accurate and helpful responses to user queries by utilizing the available tools when necessary."
+                "You are an intelligent assistant capable of performing web searches, retrieving stock market data, and searching Wikipedia. "
+                "When a user query is received, determine the most appropriate tool to use based on the nature of the query. "
+                "If the query involves retrieving information from the web, use the DuckDuckGo search tool. "
+                "If the query involves retrieving stock market data, use the stock price retrieval tool. "
+                "If the query involves retrieving information from Wikipedia, use the Wikipedia search tool. "
+                "If a tool fails to provide the necessary information, respond with an appropriate message indicating the limitation. "
+                "Always provide accurate and helpful responses to user queries by utilizing the available tools when necessary."
             )
         )
         user_message = HumanMessage(content=query)
@@ -78,8 +101,9 @@ class IntelligentAgent:
 
 if __name__ == "__main__":
     agent = IntelligentAgent()
-    agent.run("Who won the Best Actor award at the most recent Oscars?")
+    agent.run("Who is Marie Curie and how old would she be today?")
     # agent.run("How many years has it been since the fall of the Berlin Wall?")
     # agent.run("What is the current stock price of Microsoft, and how does it compare to its price one month ago?")
     # agent.run("What is the stock price of the company that Sundar Pichai is CEO of?")
     # agent.run("If the stock price of Amazon increases by 20%, what will be its new price?")
+    # agent.run("Who won the Best Actor award at the most recent Oscars?")
