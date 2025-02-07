@@ -13,3 +13,5 @@ pandas
 pypdf
 python-dotenv
 mysql-connector-python
+duckduckgo-search
+yahoo-finance
