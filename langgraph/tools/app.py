@@ -19,15 +19,28 @@ class QueryState(TypedDict):
 class IntelligentAgent:
     def __init__(self):
         """Initializes the agent with tools and workflow setup."""
+        self.duckduckgo_search_tool = DuckDuckGoSearchRun()
         self.wikipedia_retriever = WikipediaRetriever(load_all_available_meta=False, top_k_results=1)
         self.tools = [
-            DuckDuckGoSearchRun(),
+            self.duckduckgo_search,
             self.wikipedia_search,
             self.get_stock_price
         ]
         self.llm = ChatOpenAI(model="gpt-4o-mini")
         self.llm_with_tools = self.llm.bind_tools(self.tools)
         self.workflow = self.build_workflow()
+        
+    def duckduckgo_search(self, query: str) -> Any:
+        """
+        Perform a search using DuckDuckGoSearchRun.
+
+        Args:
+            query (str): The search query.
+
+        Returns:
+            Any: The search results.
+        """
+        return self.duckduckgo_search_tool.invoke(query)
         
     def wikipedia_search(self, query: str) -> Any:
         """
@@ -101,9 +114,4 @@ class IntelligentAgent:
 
 if __name__ == "__main__":
     agent = IntelligentAgent()
-    agent.run("Who is Marie Curie and how old would she be today?")
-    # agent.run("How many years has it been since the fall of the Berlin Wall?")
-    # agent.run("What is the current stock price of Microsoft, and how does it compare to its price one month ago?")
-    # agent.run("What is the stock price of the company that Sundar Pichai is CEO of?")
-    # agent.run("If the stock price of Amazon increases by 20%, what will be its new price?")
-    # agent.run("Who won the Best Actor award at the most recent Oscars?")
+    agent.run("Tell me some historical facts about Paris including latest news and current weather conditions.")
