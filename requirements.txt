@@ -6,6 +6,8 @@ langchain-community
 langchain-core
 langchain-openai
 langchain-ollama
+langchain-chroma
+chromadb
 firecrawl-py
 beautifulsoup4
 tavily-python
