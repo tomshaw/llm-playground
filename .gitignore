@@ -1,2 +1,24 @@
+# Python virtual environments
 .env
-desktop.ini
+.venv/
+venv/
+env/
+ENV/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# pip/UV cache and lock files
+pip-wheel-metadata/
+pip-log.txt
+uv.cache/
+uv.lock
+
+# Distribution/build
+build/
+dist/
+*.egg-info/
+
+.vscode/
