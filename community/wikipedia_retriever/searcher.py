@@ -33,7 +33,7 @@ class WikipediaSearcher:
         :return: A WikipediaSearchResponse object containing Wikipedia summaries.
         """
         start_time = time.time()
-        results = self.retriever.get_relevant_documents(query)
+        results = self.retriever.invoke(query)
         search_results = [WikipediaSearchResult(title=doc.metadata.get("title", "Unknown"), content=doc.page_content) for doc in results]
         response_time = time.time() - start_time
         return WikipediaSearchResponse(query=query, results=search_results, response_time=response_time)
